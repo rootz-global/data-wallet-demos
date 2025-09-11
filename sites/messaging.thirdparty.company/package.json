@@ -1,0 +1,18 @@
+{
+  "name": "messaging.thirdparty.company",
+  "version": "1.0.0",
+  "description": "Part of data-wallet-demos",
+  "license": "MIT",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs",
+    "debug": "node --inspect=0.0.0.0:9229 index.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "epistery-server": "file:../../../epistery",
+    "express": "^5.1.0"
+  }
+}

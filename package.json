@@ -15,10 +15,13 @@
   "type": "commonjs",
   "main": "index.mjs",
   "scripts": {
+    "start": "node --env-file=.env index.mjs",
+    "debug": "node --env-file=.env --inspect=0.0.0.0:9229 index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "epistery": "file:../epistery/index.mjs",
-    "express": "^5.1.0"
+    "epistery-server": "file:../epistery",
+    "express": "^5.1.0",
+    "marked": "^16.2.1"
   }
 }
