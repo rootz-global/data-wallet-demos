@@ -16,5 +16,9 @@
   "main": "index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "epistery": "file:../epistery/index.mjs",
+    "express": "^5.1.0"
   }
 }
