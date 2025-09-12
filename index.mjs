@@ -6,6 +6,7 @@ import axios from 'axios';
 import http from "http";
 import https from "https";
 import child_process from "child_process";
+import Epistery from 'epistery';
 
 const rootDomain = 'thirdparty.company';
 
@@ -13,6 +14,9 @@ async function main() {
   const app = express();
   let http_port = (process.env.PORT || 4080);
   let https_port = (process.env.PORTSSL || 4443);
+
+  const epistery = Epistery.connect();
+  await epistery.setDomain(rootDomain);
 
   // fetch the repo readme and page template to use as the home page
   const template = (fs.readFileSync(resolve('./index.html'))).toString();

@@ -11,4 +11,4 @@ Each runs as a standalone app.
 |https://adsupported.thirdparty.company| node     |A site that uses epistery to track anonymous/private browser interaction |
 |https://email.thirdparty.company| dotnet   |A service that can be sent an email to be recorded as data-wallet |
 
->**NOTE**: Epistery has not been released to npm, so these demos are dependent on a relative path to the epistery repository provided in package.json 
+
