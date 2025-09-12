@@ -15,7 +15,7 @@ async function main() {
   let http_port = (process.env.PORT || 4080);
   let https_port = (process.env.PORTSSL || 4443);
 
-  const epistery = Epistery.connect();
+  const epistery = await Epistery.connect();
   await epistery.setDomain(rootDomain);
 
   // fetch the repo readme and page template to use as the home page
