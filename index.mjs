@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import {resolve,join} from 'path';
 import {marked} from 'marked';
+import axios from 'axios';
 import http from "http";
 import https from "https";
 import child_process from "child_process";
@@ -42,7 +43,7 @@ async function main() {
     return result;
   },{});
 
-  app.get('/', async (req, res) => {
+  app.all(/.*/, async (req, res) => {
     const domain = (req.hostname.endsWith('localhost'))?req.hostname.replace(/localhost$/,rootDomain):req.hostname;
     if (domain === rootDomain) {
       res.set('Content-Type', 'text/html');
@@ -50,11 +51,27 @@ async function main() {
     } else {
       const site = sites[domain];
       if (site) {
-        if (req.secure) {
-          res.redirect(`https://127.0.0.1:${site.options.env.PORTSSL}`)
-        } else {
-          res.redirect(`http://127.0.0.1:${site.options.env.PORT}`)
-        }
+        let target = req.secure
+          ? `https://127.0.0.1:${site.options.env.PORTSSL}${req.url}`
+          : `http://127.0.0.1:${site.options.env.PORT}${req.url}`;
+        const method = req.method;
+        const isBodyMethod = ['POST', 'PUT', 'PATCH'].includes(method);
+        const payload = isBodyMethod ? req.body.payload : null;
+        const headersToForward = {
+          ...req.headers,
+          host: undefined, // Prevent host mismatch
+          'content-length': undefined // Let Axios compute
+        };
+        const response = await axios({
+          method,
+          url: target,
+          headers: headersToForward,
+          data: payload,
+          params: req.query, // for GET or forwarded query string
+          validateStatus: () => true // allow non-2xx responses to pass through
+        });
+
+        res.status(response.status).set(response.headers).send(response.data);
       } else {
         res.status(404).send('Site Not found');
       }

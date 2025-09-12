@@ -20,7 +20,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "epistery-server": "file:../epistery",
+    "axios": "^1.12.0",
+    "epistery": "file:../epistery",
     "express": "^5.1.0",
     "marked": "^16.2.1"
   }

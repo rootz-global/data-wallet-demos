@@ -12,7 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "epistery-server": "file:../../../epistery",
+    "epistery": "file:../../../epistery",
     "express": "^5.1.0"
   }
 }

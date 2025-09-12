@@ -18,7 +18,8 @@ async function main() {
     res.sendFile(path.join(__dirname, 'index.html'));
   });
 
-  const PORT = process.env.TEST_PORT || 3001;
+  const PORT = process.env.PORT || 4080;
+  const PORTSSL = process.env.PORT || 4443;
 
   app.listen(PORT, () => {
     console.log(`Test site: http://localhost:${PORT}`);
