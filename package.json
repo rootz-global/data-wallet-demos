@@ -23,6 +23,7 @@
     "axios": "^1.12.0",
     "epistery": "file:../epistery",
     "express": "^5.1.0",
+    "ini": "^5.0.0",
     "marked": "^16.2.1"
   }
 }

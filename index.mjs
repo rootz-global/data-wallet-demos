@@ -7,6 +7,7 @@ import http from "http";
 import https from "https";
 import child_process from "child_process";
 import Epistery from 'epistery';
+import ini from 'ini';
 
 const rootDomain = 'thirdparty.company';
 
@@ -25,6 +26,11 @@ async function main() {
   const home = template.replace('{{content}}',body);
 
   // spawn sites
+  const env = {};
+  if (fs.existsSync(resolve('./.env'))) {
+    const envText = fs.readFileSync(resolve('./.env')).toString();
+    Object.assign(env,ini.decode(envText));
+  }
   let siteIndex = 1;
   const sites = (fs.readdirSync(resolve('./sites'))).reduce((result,site)=>{
     const options = {
@@ -32,10 +38,12 @@ async function main() {
       env: {PORT:http_port+siteIndex,PORTSSL:https_port+siteIndex,DOMAIN:site,IPFS_URL:'https://rootz.digital/api/v0'}
     };
     const proc = child_process.spawn('npm',['run','start'],options);
-    proc.stderr.on('data', (data) => {
-      console.error(`${site}:stderr: ${data}`);
+    proc.stdout.on('data', (data) => {
+      console.log(`${site}: ${data}`);
     });
-
+    proc.stderr.on('data', (data) => {
+      console.error(`${site}:E: ${data}`);
+    });
     proc.on('close', (code) => {
       console.log(`${site}:npm install process exited with code ${code}`);
     });

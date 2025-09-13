@@ -1,0 +1,16 @@
+[Unit]
+Description=data-wallet-demos
+
+[Service]
+WorkingDirectory=/opt/data-wallet-demos
+ExecStart=/usr/bin/npm start &
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=data-wallet-demos
+
+User=ubuntu
+Group=ubuntu
+
+[Install]
+WantedBy=multi-user.target
