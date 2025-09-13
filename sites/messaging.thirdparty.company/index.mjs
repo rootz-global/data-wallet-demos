@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import Epistery from 'epistery';
+import { Epistery } from 'epistery';
 
 // Get directory paths for ES modules
 const __filename = fileURLToPath(import.meta.url);

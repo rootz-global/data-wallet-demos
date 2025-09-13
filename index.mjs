@@ -6,8 +6,8 @@ import axios from 'axios';
 import http from "http";
 import https from "https";
 import child_process from "child_process";
-import Epistery from 'epistery';
 import ini from 'ini';
+import { Epistery, SSLController } from 'epistery';
 
 const rootDomain = 'thirdparty.company';
 
@@ -18,6 +18,7 @@ async function main() {
 
   const epistery = await Epistery.connect();
   await epistery.setDomain(rootDomain);
+  await epistery.attach(app);
 
   // fetch the repo readme and page template to use as the home page
   const template = (fs.readFileSync(resolve('./index.html'))).toString();
@@ -39,10 +40,10 @@ async function main() {
     };
     const proc = child_process.spawn('npm',['run','start'],options);
     proc.stdout.on('data', (data) => {
-      console.log(`${site}: ${data}`);
+      process.stdout.write(`${site}: ${data}`)
     });
     proc.stderr.on('data', (data) => {
-      console.error(`${site}:E: ${data}`);
+      process.stdout.write(`${site}:E: ${data}`);
     });
     proc.on('close', (code) => {
       console.log(`${site}:npm install process exited with code ${code}`);
@@ -98,13 +99,13 @@ async function main() {
     let address = http_server.address();
     console.log(`Listening on ${address.address} ${address.port} (${address.family})`);
   });
-  // const https_server = https.createServer(certify.SNI,app);
-  // https_server.listen(https_port);
-  // https_server.on('error', console.error);
-  // https_server.on('listening',()=>{
-  //   let address = https_server.address();
-  //   console.log(`Listening on ${address.address} ${address.port} (${address.family})`);
-  // });
+  const https_server = https.createServer(SSLController.SNI,app);
+  https_server.listen(https_port);
+  https_server.on('error', console.error);
+  https_server.on('listening',()=>{
+    let address = https_server.address();
+    console.log(`Listening on ${address.address} ${address.port} (${address.family})`);
+  });
 }
 
 main().catch(err => {
