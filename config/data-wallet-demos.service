@@ -8,6 +8,8 @@ Restart=always
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=data-wallet-demos
+Environment="PORT=80"
+Environment="PORTSSL=443"
 
 User=ubuntu
 Group=ubuntu
