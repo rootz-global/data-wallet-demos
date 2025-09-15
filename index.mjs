@@ -19,7 +19,7 @@ async function main() {
 
   const epistery = await Epistery.connect();
   await epistery.setDomain(rootDomain);
-  await epistery.attach(app);
+  // await epistery.attach(app);
 
   const certify = await Certify.attach(app,{contactEmail:'michael@sprague.com'});
 
