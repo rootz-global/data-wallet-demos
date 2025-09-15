@@ -14,7 +14,7 @@ const rootDomain = 'thirdparty.company';
 
 async function main() {
   const app = express();
-  let http_port = (process.env.PORT || 4090);
+  let http_port = (process.env.PORT || 4080);
   let https_port = (process.env.PORTSSL || 4443);
 
   const epistery = await Epistery.connect();

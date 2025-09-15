@@ -16,11 +16,11 @@
   "main": "index.mjs",
   "scripts": {
     "start": "node --env-file=.env index.mjs",
-    "debug": "node --env-file=.env --inspect=0.0.0.0:9229 index.mjs",
+    "debug": "PROFILE=DEV node --env-file=.env --inspect=0.0.0.0:9229 index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@metric-im/administrate": "file:../administrate",
+    "@metric-im/administrate": "file:../../metric-im/administrate",
     "axios": "^1.12.0",
     "epistery": "file:../epistery",
     "express": "^5.1.0",
