@@ -7,18 +7,21 @@ import http from "http";
 import https from "https";
 import child_process from "child_process";
 import ini from 'ini';
-import { Epistery, SSLController } from 'epistery';
+import { Epistery } from 'epistery';
+import { Certify } from '@metric-im/administrate';
 
 const rootDomain = 'thirdparty.company';
 
 async function main() {
   const app = express();
-  let http_port = (process.env.PORT || 4080);
+  let http_port = (process.env.PORT || 4090);
   let https_port = (process.env.PORTSSL || 4443);
 
   const epistery = await Epistery.connect();
   await epistery.setDomain(rootDomain);
   await epistery.attach(app);
+
+  const certify = await Certify.attach(app,{contactEmail:'michael@sprague.com'});
 
   // fetch the repo readme and page template to use as the home page
   const template = (fs.readFileSync(resolve('./index.html'))).toString();
@@ -99,7 +102,7 @@ async function main() {
     let address = http_server.address();
     console.log(`Listening on ${address.address} ${address.port} (${address.family})`);
   });
-  const https_server = https.createServer(SSLController.SNI,app);
+  const https_server = https.createServer(certify.SNI,app);
   https_server.listen(https_port);
   https_server.on('error', console.error);
   https_server.on('listening',()=>{

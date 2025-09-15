@@ -20,6 +20,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@metric-im/administrate": "file:../administrate",
     "axios": "^1.12.0",
     "epistery": "file:../epistery",
     "express": "^5.1.0",
