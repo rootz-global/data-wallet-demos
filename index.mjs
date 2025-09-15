@@ -37,9 +37,11 @@ async function main() {
   }
   let siteIndex = 1;
   const sites = (fs.readdirSync(resolve('./sites'))).reduce((result,site)=>{
+    const childPORT = parseInt(http_port)+siteIndex;
+    const childPORTSSL = parseInt(https_port)+siteIndex;
     const options = {
       cwd: resolve(`./sites/${site}`),
-      env: {PORT:http_port+siteIndex,PORTSSL:https_port+siteIndex,DOMAIN:site,IPFS_URL:'https://rootz.digital/api/v0'}
+      env: {PORT:childPORT,PORTSSL:childPORTSSL,DOMAIN:site,IPFS_URL:'https://rootz.digital/api/v0'}
     };
     const proc = child_process.spawn('npm',['run','start'],options);
     proc.stdout.on('data', (data) => {
