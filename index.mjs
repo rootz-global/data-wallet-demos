@@ -41,10 +41,9 @@ async function main() {
   let siteIndex = 1;
   const sites = (fs.readdirSync(resolve('./sites'))).reduce((result,site)=>{
     const childPORT = parseInt(spawn_port)+siteIndex;
-    const childPORTSSL = parseInt(spawn_port)+siteIndex+10;
     const options = {
       cwd: resolve(`./sites/${site}`),
-      env: {PORT:childPORT,PORTSSL:childPORTSSL,DOMAIN:site,IPFS_URL:'https://rootz.digital/api/v0'}
+      env: {PORT:childPORT,DOMAIN:site,IPFS_URL:'https://rootz.digital/api/v0'}
     };
     try {
       const proc = child_process.spawn('npm',['run','start'],options);
@@ -76,7 +75,6 @@ async function main() {
     } else {
       const site = sites[domain];
       if (site) {
-        // Always use HTTP for internal communication (SSL terminated at main process)
         let target = `http://127.0.0.1:${site.options.env.PORT}${req.url}`;
         const method = req.method;
         const isBodyMethod = ['POST', 'PUT', 'PATCH'].includes(method);
@@ -116,6 +114,44 @@ async function main() {
   https_server.on('listening',()=>{
     let address = https_server.address();
     console.log(`Listening on ${address.address} ${address.port} (${address.family})`);
+  });
+
+  function killAllChildProcesses() {
+    console.log('Killing all spawned child processes...');
+    Object.values(sites).forEach(site => {
+      if (site.proc && !site.proc.killed) {
+        console.log(`Killing process for site: ${site.name}`);
+        site.proc.kill('SIGTERM');
+      }
+    });
+  }
+
+  process.on('SIGINT', () => {
+    console.log('Received SIGINT, shutting down gracefully...');
+    killAllChildProcesses();
+    process.exit(0);
+  });
+
+  process.on('SIGTERM', () => {
+    console.log('Received SIGTERM, shutting down gracefully...');
+    killAllChildProcesses();
+    process.exit(0);
+  });
+
+  process.on('exit', () => {
+    killAllChildProcesses();
+  });
+
+  process.on('uncaughtException', (err) => {
+    console.error('Uncaught exception:', err);
+    killAllChildProcesses();
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled rejection at:', promise, 'reason:', reason);
+    killAllChildProcesses();
+    process.exit(1);
   });
 }
 

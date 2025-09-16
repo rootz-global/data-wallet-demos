@@ -21,7 +21,6 @@ async function main() {
 
   const PORT = process.env.PORT || 4080;
 
-  // Only HTTP server - SSL terminated at main process
   const http_server = http.createServer(app);
   http_server.listen(PORT);
   http_server.on('error', console.error);
