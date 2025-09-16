@@ -93,7 +93,10 @@ async function main() {
           headers: headersToForward,
           data: payload,
           params: req.query, // for GET or forwarded query string
-          validateStatus: () => true // allow non-2xx responses to pass through
+          validateStatus: () => true, // allow non-2xx responses to pass through
+          httpsAgent: new (await import('https')).default.Agent({
+            rejectUnauthorized: false // Allow self-signed certificates for localhost
+          })
         });
 
         res.status(response.status).set(response.headers).send(response.data);
