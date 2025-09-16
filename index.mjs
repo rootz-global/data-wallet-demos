@@ -8,7 +8,7 @@ import https from "https";
 import child_process from "child_process";
 import ini from 'ini';
 import { Epistery } from 'epistery';
-import { Certify, Deplyment } from '@metric-im/administrate';
+import { Certify, Synchronize } from '@metric-im/administrate';
 
 const rootDomain = 'thirdparty.company';
 
@@ -24,7 +24,7 @@ async function main() {
 
   const certify = await Certify.attach(app,{contactEmail:'michael@sprague.com'});
 
-  const deployment = await Deplyment.attach(app,undefined,'main');
+  await Synchronize.attach(app,undefined,'main');
 
   // fetch the repo readme and page template to use as the home page
   const template = (fs.readFileSync(resolve('./index.html'))).toString();
