@@ -16,6 +16,7 @@ async function main() {
   const app = express();
   let http_port = (process.env.PORT || 4080);
   let https_port = (process.env.PORTSSL || 4443);
+  const spawn_port = (process.env.PORTSPAWN || 63874);
 
   const epistery = await Epistery.connect();
   await epistery.setDomain(rootDomain);
@@ -37,8 +38,8 @@ async function main() {
   }
   let siteIndex = 1;
   const sites = (fs.readdirSync(resolve('./sites'))).reduce((result,site)=>{
-    const childPORT = parseInt(http_port)+siteIndex;
-    const childPORTSSL = parseInt(https_port)+siteIndex;
+    const childPORT = parseInt(spawn_port)+siteIndex;
+    const childPORTSSL = parseInt(spawn_port)+siteIndex;
     const options = {
       cwd: resolve(`./sites/${site}`),
       env: {PORT:childPORT,PORTSSL:childPORTSSL,DOMAIN:site,IPFS_URL:'https://rootz.digital/api/v0'}
