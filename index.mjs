@@ -18,12 +18,14 @@ async function main() {
   let https_port = (process.env.PORTSSL || 4443);
   const spawn_port = (process.env.PORTSPAWN || 53874);
 
+  // middleware to manage SSL cert
+  const certify = await Certify.attach(app,{contactEmail:'michael@sprague.com'});
+  // middleware to handle epistery data wallets
   const epistery = await Epistery.connect();
   await epistery.setDomain(rootDomain);
   // await epistery.attach(app);
 
-  const certify = await Certify.attach(app,{contactEmail:'michael@sprague.com'});
-
+  // web hook for github updates to repository
   await Synchronize.attach(app,undefined,'main');
 
   // fetch the repo readme and page template to use as the home page
