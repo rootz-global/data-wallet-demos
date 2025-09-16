@@ -39,7 +39,7 @@ async function main() {
   let siteIndex = 1;
   const sites = (fs.readdirSync(resolve('./sites'))).reduce((result,site)=>{
     const childPORT = parseInt(spawn_port)+siteIndex;
-    const childPORTSSL = parseInt(spawn_port)+siteIndex;
+    const childPORTSSL = parseInt(spawn_port)+siteIndex+10;
     const options = {
       cwd: resolve(`./sites/${site}`),
       env: {PORT:childPORT,PORTSSL:childPORTSSL,DOMAIN:site,IPFS_URL:'https://rootz.digital/api/v0'}
@@ -47,10 +47,10 @@ async function main() {
     try {
       const proc = child_process.spawn('npm',['run','start'],options);
       proc.stdout.on('data', (data) => {
-        process.stdout.write(`${site}: ${data}`)
+        process.stdout.write(`${site}: ${data.toString()}`)
       });
       proc.stderr.on('data', (data) => {
-        process.stdout.write(`${site}:E: ${data}`);
+        process.stdout.write(`${site}:E: ${data.toString()}`);
       });
       proc.on('close', (code) => {
         console.log(`${site}:npm install process exited with code ${code}`);
