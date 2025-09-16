@@ -12,6 +12,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@metric-im/administrate": "file:../../../../metric-im/administrate",
     "epistery": "file:../../../epistery",
     "express": "^5.1.0"
   }
