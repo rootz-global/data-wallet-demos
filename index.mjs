@@ -44,21 +44,25 @@ async function main() {
       cwd: resolve(`./sites/${site}`),
       env: {PORT:childPORT,PORTSSL:childPORTSSL,DOMAIN:site,IPFS_URL:'https://rootz.digital/api/v0'}
     };
-    const proc = child_process.spawn('npm',['run','start'],options);
-    proc.stdout.on('data', (data) => {
-      process.stdout.write(`${site}: ${data}`)
-    });
-    proc.stderr.on('data', (data) => {
-      process.stdout.write(`${site}:E: ${data}`);
-    });
-    proc.on('close', (code) => {
-      console.log(`${site}:npm install process exited with code ${code}`);
-    });
-
-    proc.on('error', (err) => {
-      console.error(`${site}:Failed to start npm process:`, err);
-    });
-    result[site] = {name:site,proc:proc,options:options,index:siteIndex++};
+    try {
+      const proc = child_process.spawn('npm',['run','start'],options);
+      proc.stdout.on('data', (data) => {
+        process.stdout.write(`${site}: ${data}`)
+      });
+      proc.stderr.on('data', (data) => {
+        process.stdout.write(`${site}:E: ${data}`);
+      });
+      proc.on('close', (code) => {
+        console.log(`${site}:npm install process exited with code ${code}`);
+      });
+      proc.on('error', (err) => {
+        console.error(`${site}:Failed to start npm process:`, err);
+      });
+      result[site] = {name:site,proc:proc,options:options,index:siteIndex++};
+    } catch(e) {
+      console.log(e);
+      return result;
+    }
     return result;
   },{});
 
