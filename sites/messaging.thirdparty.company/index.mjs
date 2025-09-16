@@ -12,7 +12,7 @@ async function main() {
 
   // attach Epistery directly to app
   const epistery = await Epistery.connect();
-  await epistery.attach(app);
+  // await epistery.attach(app);
 
   app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
