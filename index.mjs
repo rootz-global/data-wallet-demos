@@ -16,7 +16,7 @@ async function main() {
   const app = express();
   let http_port = (process.env.PORT || 4080);
   let https_port = (process.env.PORTSSL || 4443);
-  const spawn_port = (process.env.PORTSPAWN || 63874);
+  const spawn_port = (process.env.PORTSPAWN || 53874);
 
   const epistery = await Epistery.connect();
   await epistery.setDomain(rootDomain);
