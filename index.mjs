@@ -76,9 +76,8 @@ async function main() {
     } else {
       const site = sites[domain];
       if (site) {
-        let target = req.secure
-          ? `https://127.0.0.1:${site.options.env.PORTSSL}${req.url}`
-          : `http://127.0.0.1:${site.options.env.PORT}${req.url}`;
+        // Always use HTTP for internal communication (SSL terminated at main process)
+        let target = `http://127.0.0.1:${site.options.env.PORT}${req.url}`;
         const method = req.method;
         const isBodyMethod = ['POST', 'PUT', 'PATCH'].includes(method);
         const payload = isBodyMethod ? req.body.payload : null;
@@ -94,9 +93,6 @@ async function main() {
           data: payload,
           params: req.query, // for GET or forwarded query string
           validateStatus: () => true, // allow non-2xx responses to pass through
-          httpsAgent: new (await import('https')).default.Agent({
-            rejectUnauthorized: false // Allow self-signed certificates for localhost
-          })
         });
 
         res.status(response.status).set(response.headers).send(response.data);
