@@ -63,7 +63,7 @@ async function main() {
   },{});
 
   app.all(/.*/, async (req, res) => {
-    const domain = (req.hostname.endsWith('localhost'))?req.hostname.replace(/localhost$/,rootDomain):req.hostname;
+    const domain = (req.hostname.endsWith('127.0.0.1'))?req.hostname.replace(/localhost$/,rootDomain):req.hostname;
     if (domain === rootDomain) {
       res.set('Content-Type', 'text/html');
       res.send(home);
