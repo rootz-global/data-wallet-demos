@@ -6,7 +6,7 @@ import {fileURLToPath} from "url";
 import Data from "./data.mjs";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const library = {
-    'moment':'/moment/min/moment-with-locales.min.js'
+    'moment':'/moment/min/moment-with-locales.js'
 }
 
 let main = async function() {
