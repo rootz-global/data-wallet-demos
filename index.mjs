@@ -69,6 +69,9 @@ async function main() {
     return result;
   },{});
 
+  app.get('/style.css', (req,res)=>{
+    res.sendFile(`${resolve('./style.css')}`);
+  });
   app.all(/.*/, async (req, res) => {
     const domain = (req.hostname.endsWith('localhost'))?req.hostname.replace(/localhost$/,rootDomain):req.hostname;
     if (domain === rootDomain) {
