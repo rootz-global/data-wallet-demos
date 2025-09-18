@@ -11,9 +11,20 @@ export default class Data {
         this.maxRotation = 10;
         this.maxLife = 60; //minutes
 
-        const dataPath = path.join(os.homedir(), '.tweetpit', 'data.json');
-        let fileData = fs.readFileSync(dataPath);
-        this.posts = fileData?JSON.parse(fileData):[];
+        const dataDir = path.join(os.homedir(), '.tweetpit');
+        const dataPath = path.join(dataDir, 'data.json');
+        
+        // Ensure the .tweetpit directory exists
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
+        
+        // Read the data file if it exists, otherwise start with empty array
+        let fileData = '';
+        if (fs.existsSync(dataPath)) {
+            fileData = fs.readFileSync(dataPath);
+        }
+        this.posts = fileData ? JSON.parse(fileData) : [];
         this.rotate();
     }
 
@@ -84,7 +95,14 @@ export default class Data {
             }
             return accumulator;
         },[])
-        const dataPath = path.join(os.homedir(), '.tweetpit', 'data.json');
+        const dataDir = path.join(os.homedir(), '.tweetpit');
+        const dataPath = path.join(dataDir, 'data.json');
+        
+        // Ensure the .tweetpit directory exists before writing
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
+        
         fs.writeFileSync(dataPath, JSON.stringify(this.posts));
         setTimeout(this.rotate.bind(this),2000);
     }
