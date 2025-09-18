@@ -1,0 +1,66 @@
+. {
+    display:flex;
+    flex-direction: column;
+    height:100%;
+    width:100%;
+    align-items: center;
+    justify-content: center;
+}
+.InputText {
+    width:70%;
+    font-size:1.5em;
+    position:relative;
+    margin-top:var(--spacer2);
+}
+.InputText input {
+    padding:var(--spacer);
+    margin-right:50px;
+    border-radius: var(--spacer);
+    width:calc(100% - var(--spacer2));
+    min-width:unset;
+}
+th {
+    text-align:left;
+}
+.frame-container {
+    background-color:white;
+}
+.location-data {
+    font-size:2em;
+}
+.location-data .scale {
+    font-size:0.5em;
+}
+.send-button {
+    position:absolute;
+    right:-2px;
+    top:0;
+    bottom:0;
+    width:50px;
+    background-color: var(--action-color);
+    border-radius: 0 var(--spacer) var(--spacer) 0;
+    display:flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+.send-button:hover {
+    background-color: var(--action-color-hilite);
+}
+.send-button .icon {
+    font-size:1.2em;
+}
+iframe {
+    margin-top:var(--spacer2);
+    flex: 1;
+}
+.ad-box {
+    flex:0 0;
+    border:1px solid black;
+    margin-top:var(--spacer2);
+    padding:var(--spacer2);
+    text-align:center;
+    min-width:50%;
+    margin-bottom:var(--spacer2);
+}

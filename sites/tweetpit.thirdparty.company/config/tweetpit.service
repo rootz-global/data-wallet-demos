@@ -1,0 +1,15 @@
+[Unit]
+Description=Tweetpit
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/tweetpit
+ExecStart=npm start &
+Restart=always
+StandardOutput=journal
+StandardError=journal
+User=ubuntu
+Group=ubuntu
+
+[Install]
+WantedBy=multi-user.target

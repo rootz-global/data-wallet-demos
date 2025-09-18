@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/root.css">
+    <link rel="stylesheet" href="/styles/icons.css">
+    <title>Tweetpit</title>
+    <script src="/lib/moment"></script>
+    <script type="module" lang="javascript" src="index.mjs"></script>
+</head>
+<body>
+    <div id="main">
+        <h1>tweetpit</h1>
+        <div id="intro">
+            <p>This is an experiment. Say what you want. A few posts a day are
+                randomly selected. The rest are forgotten. From this random set one
+                is featured. Help weed out the offensive or profane, and promote the
+                interesting by voting on posts from the random set.</p>
+            <p>Perhaps a parody of today's social media, with its firehouse of posts.
+                You only see ten, but can scream to the wind. A lottery determines what rants
+                get through and participants vote on the ten who passed the lottery to
+                see what's featured.</p>
+            <p>It is a tiny app with minimal dependencies, no identity or cookies.
+                <a href="https://github.com/mespr/tweetpit">View source</a>. The rotation rules
+                assume a tiny audience, so currently swapping every 30 minutes with ten
+                slots that get filled randomly as posts expire.</p>
+        </div>
+        <div id="featured">
+            This has been said
+        </div>
+        <div id="entry">
+            <textarea id="entry-post" placeholder="Say it to the wind"></textarea>
+            <div id="entry-control">
+                <div id="entry-status"></div>
+                <button id="entry-send">post</button>
+            </div>
+        </div>
+        <button id="vote">vote on upcoming features</button>
+    </div>
+    <div id="popup-shim"></div>
+    <div id="feature-list"></div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+. {
+    display:flex;
+    flex-direction: column;
+    height:calc(100% - var(--spacer2));
+    width:calc(100% - var(--spacer2));
+    align-items: center;
+    justify-content: flex-start;
+    font-size:1.2em;
+    padding:var(--spacer);
+}
+P {
+    flex:0 0;
+}

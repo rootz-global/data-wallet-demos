@@ -83,7 +83,7 @@ async function main() {
         let target = `http://127.0.0.1:${site.options.env.PORT}${req.url}`;
         const method = req.method;
         const isBodyMethod = ['POST', 'PUT', 'PATCH'].includes(method);
-        const payload = isBodyMethod ? req.body.payload : null;
+        const payload = isBodyMethod ? req.body : null;
         const headersToForward = {
           ...req.headers,
           host: undefined, // Prevent host mismatch
