@@ -6,10 +6,10 @@ Each runs as a standalone app.
 
 | Path                                   | Language | Description                                                                                      
 |----------------------------------------|----------|--------------------------------------------------------------------------------------------------|
-| https://messaging.thirdparty.company   | node     | Basic exchange of text messages. Raw site                                                                 |
-| https://journiest.thirdparty.company   | node     | A publishing site that uses epistery to source inline ads and anonymously track browser interact |
-| https://tweetpit.thirdparty.company    | node     | Post into the wind. Site uses epistery to mark ownership of frivolous user generated content |
-| https://music.thirdparty.company       | node     | Example of uploading a song and transferring ownership                                           |
-| https://email.thirdparty.company       | dotnet   | A service that can be sent an email to be recorded as data-wallet                                |
+| [messaging](https://messaging.thirdparty.company)   | node     | Basic exchange of text messages. Raw site                                                                 |
+| [journiest](https://journiest.thirdparty.company)   | node     | A publishing site that uses epistery to source inline ads and anonymously track browser interact |
+| [tweetpit](https://tweetpit.com)    | node     | Post into the wind. Site uses epistery to mark ownership of frivolous user generated content |
+| [music demo](https://music.thirdparty.company)       | node     | Example of uploading a song and transferring ownership                                           |
+| [email](https://email.thirdparty.company)       | dotnet   | A service that can be sent an email to be recorded as data-wallet                                |
 
 
