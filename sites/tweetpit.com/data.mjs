@@ -45,7 +45,15 @@ export default class Data {
     rotateFeatured() {
         console.log('rotateFeatured() called - posts.length:', this.posts.length);
         if (this.posts.length > 0) {
-            this.featuredPost = this.posts.shift();
+            // If there's a current featured post, put it back in the list
+            if (this.featuredPost) {
+                console.log('Returning previous featured post to list:', this.featuredPost);
+                this.posts.push(this.featuredPost);
+                this.sortPosts();
+            }
+            
+            // Get the new top post for featuring (don't remove it permanently)
+            this.featuredPost = {...this.posts[0]}; // Copy the post
             this.featuredExpiry = moment().add(this.featuredRotationTime, 'minutes');
             console.log('Set new featured post:', this.featuredPost);
         } else {
