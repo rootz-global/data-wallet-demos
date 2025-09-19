@@ -25,19 +25,26 @@ let main = async function() {
     // utility for constructing random alpha root names. Cap at 256 so it's not abused.
     app.post('/post',(req,res)=>{
         try {
+            console.log('POST /post received:', {
+                body: req.body,
+                text: req.body?.text,
+                headers: req.headers
+            });
             let result = data.tryEntry(req.body.text);
+            console.log('tryEntry result:', result);
             res.status(200).json(result);
         } catch(e) {
-            console.error(e);
+            console.error('Error in POST /post:', e);
             res.status(500).json({status:'error',message:e.message});
         }
     });
     app.get('/featured',(req,res) =>{
         try {
             let result = data.featured();
+            console.log('Featured result:', result);
             res.status(200).json(result || {body:"Working... Post something."});
         } catch(e) {
-            console.error(e);
+            console.error('Error in GET /featured:', e);
             res.status(500).json({status:'error',message:e.message});
         }
     })

@@ -11,11 +11,16 @@ export default class Data {
         this.featuredRotationTime = 5; //minutes
 
         const dataPath = './data.json';
+        console.log('Data constructor - looking for file at:', dataPath);
         let fileData = '';
         if (fs.existsSync(dataPath)) {
             fileData = fs.readFileSync(dataPath);
+            console.log('Loaded data file, length:', fileData.length);
+        } else {
+            console.log('Data file does not exist, starting with empty array');
         }
         this.posts = fileData ? JSON.parse(fileData) : [];
+        console.log('Initialized with', this.posts.length, 'posts:', this.posts);
         this.featuredPost = null;
         this.featuredExpiry = null;
         this.rotate();
@@ -25,9 +30,12 @@ export default class Data {
      * Get the featured post (moved from top of list for rotation)
      */
     featured() {
+        console.log('featured() called - featuredPost:', this.featuredPost, 'expiry:', this.featuredExpiry);
         if (!this.featuredPost || (this.featuredExpiry && moment().isAfter(this.featuredExpiry))) {
+            console.log('Rotating featured post...');
             this.rotateFeatured();
         }
+        console.log('Returning featured post:', this.featuredPost);
         return this.featuredPost;
     }
 
@@ -35,9 +43,13 @@ export default class Data {
      * Move top post to featured and set rotation timer
      */
     rotateFeatured() {
+        console.log('rotateFeatured() called - posts.length:', this.posts.length);
         if (this.posts.length > 0) {
             this.featuredPost = this.posts.shift();
             this.featuredExpiry = moment().add(this.featuredRotationTime, 'minutes');
+            console.log('Set new featured post:', this.featuredPost);
+        } else {
+            console.log('No posts available for featuring');
         }
     }
 
@@ -52,14 +64,23 @@ export default class Data {
      * Given a post, randomly select it based on traffic.
      */
     tryEntry(body) {
+        console.log('tryEntry called with body:', body, 'type:', typeof body);
+        
+        // Ensure body is a string and handle undefined/null
+        const bodyText = (body == null || body === undefined) ? '' : String(body);
+        console.log('Processed bodyText:', bodyText);
+        
         let record = {
             id:Data.createid(),
             created:moment().valueOf(),
             ups:0,
             downs:0,
             basePoints:100,
-            body:body
+            body:bodyText
         }
+        console.log('Created record:', record);
+        console.log('Record.body specifically:', record.body);
+        
         this.posts.push(record);
         this.sortPosts();
         
@@ -67,6 +88,8 @@ export default class Data {
             this.posts = this.posts.slice(0, this.maxRotation);
         }
         
+        console.log('Posts after adding:', this.posts.length, 'posts');
+        console.log('First post body:', this.posts[0]?.body);
         return record;
     }
 
@@ -121,7 +144,14 @@ export default class Data {
 
     rotate() {
         this.sortPosts();
-        fs.writeFileSync('./data.json',JSON.stringify(this.posts));
+        try {
+            const jsonData = JSON.stringify(this.posts);
+            console.log('Writing data.json with', this.posts.length, 'posts, first post:', this.posts[0]);
+            fs.writeFileSync('./data.json', jsonData);
+            console.log('Successfully wrote data.json');
+        } catch(e) {
+            console.error('Error writing data.json:', e);
+        }
         setTimeout(this.rotate.bind(this),2000);
     }
 
