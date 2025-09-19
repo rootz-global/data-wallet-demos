@@ -21,9 +21,31 @@ export default class Data {
         }
         this.posts = fileData ? JSON.parse(fileData) : [];
         console.log('Initialized with', this.posts.length, 'posts:', this.posts);
+        
+        // Remove duplicates based on post ID
+        this.removeDuplicates();
+        
         this.featuredPost = null;
         this.featuredExpiry = null;
         this.rotate();
+    }
+
+    /**
+     * Remove duplicate posts based on ID
+     */
+    removeDuplicates() {
+        const seen = new Set();
+        const originalLength = this.posts.length;
+        this.posts = this.posts.filter(post => {
+            if (seen.has(post.id)) {
+                return false; // Remove duplicate
+            }
+            seen.add(post.id);
+            return true; // Keep original
+        });
+        if (originalLength !== this.posts.length) {
+            console.log(`Removed ${originalLength - this.posts.length} duplicate posts`);
+        }
     }
 
     /**
@@ -47,8 +69,9 @@ export default class Data {
                 this.sortPosts();
             }
             
-            // Get the new top post for featuring (don't remove it permanently)
+            // Get the new top post for featuring and REMOVE it from the list to prevent duplicates
             this.featuredPost = {...this.posts[0]}; // Copy the post
+            this.posts.shift(); // Remove the top post from the list since it's now featured
             this.featuredExpiry = moment().add(this.featuredRotationTime, 'minutes');
         }
     }
@@ -143,6 +166,7 @@ export default class Data {
     }
 
     rotate() {
+        this.removeDuplicates(); // Clean up duplicates during rotation
         this.sortPosts();
         try {
             const jsonData = JSON.stringify(this.posts);
