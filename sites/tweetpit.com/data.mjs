@@ -30,12 +30,9 @@ export default class Data {
      * Get the featured post (moved from top of list for rotation)
      */
     featured() {
-        console.log('featured() called - featuredPost:', this.featuredPost, 'expiry:', this.featuredExpiry);
         if (!this.featuredPost || (this.featuredExpiry && moment().isAfter(this.featuredExpiry))) {
-            console.log('Rotating featured post...');
             this.rotateFeatured();
         }
-        console.log('Returning featured post:', this.featuredPost);
         return this.featuredPost;
     }
 
@@ -43,11 +40,9 @@ export default class Data {
      * Move top post to featured and set rotation timer
      */
     rotateFeatured() {
-        console.log('rotateFeatured() called - posts.length:', this.posts.length);
         if (this.posts.length > 0) {
             // If there's a current featured post, put it back in the list
             if (this.featuredPost) {
-                console.log('Returning previous featured post to list:', this.featuredPost);
                 this.posts.push(this.featuredPost);
                 this.sortPosts();
             }
@@ -55,9 +50,6 @@ export default class Data {
             // Get the new top post for featuring (don't remove it permanently)
             this.featuredPost = {...this.posts[0]}; // Copy the post
             this.featuredExpiry = moment().add(this.featuredRotationTime, 'minutes');
-            console.log('Set new featured post:', this.featuredPost);
-        } else {
-            console.log('No posts available for featuring');
         }
     }
 
