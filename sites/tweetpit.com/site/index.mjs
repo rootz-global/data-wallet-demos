@@ -23,7 +23,11 @@ onload = async () =>{
     entrySend.addEventListener('click',async (e) =>{
         entryStatus.innerHTML = 'Posting...';
         try {
-            let result = await API.post('/post',{text:entryPost.value});
+            console.log('Frontend: About to post with text:', entryPost.value);
+            let postData = {text:entryPost.value};
+            console.log('Frontend: Post data object:', postData);
+            let result = await API.post('/post', postData);
+            console.log('Frontend: Got result:', result);
             entryPost.value = '';
             if (result.id) {
                 entryStatus.innerHTML = 'Posted! Your submission entered the lottery.';
@@ -34,6 +38,7 @@ onload = async () =>{
                 entryStatus.innerHTML = statusDefault;
             }, 3000);
         } catch(e) {
+            console.error('Frontend: Error posting:', e);
             entryStatus.innerHTML = 'Error posting. Please try again.';
             setTimeout(() => {
                 entryStatus.innerHTML = statusDefault;
@@ -128,8 +133,13 @@ class API {
     }
     static async post(path,body) {
         if (path.charAt(0) !== '/') path = '/'+path;
-        let options = {method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)};
+        console.log('API.post called with path:', path, 'body:', body);
+        let jsonBody = JSON.stringify(body);
+        console.log('API.post stringified body:', jsonBody);
+        let options = {method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:jsonBody};
+        console.log('API.post options:', options);
         let response = await fetch(path,options);
+        console.log('API.post response status:', response.status);
         if (response.ok) {
             return response.status===204?{}:await response.json();
         } else {

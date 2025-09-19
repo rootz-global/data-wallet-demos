@@ -69,6 +69,10 @@ async function main() {
     return result;
   },{});
 
+  // Add body parsing middleware for proper proxy forwarding
+  app.use(express.json({limit: '50mb'}));
+  app.use(express.urlencoded({extended: true}));
+
   app.get('/style.css', (req,res)=>{
     res.sendFile(`${resolve('./style.css')}`);
   });
@@ -84,11 +88,20 @@ async function main() {
         const method = req.method;
         const isBodyMethod = ['POST', 'PUT', 'PATCH'].includes(method);
         const payload = isBodyMethod ? req.body : null;
+        
+        // Debug logging for POST requests
+        if (method === 'POST') {
+          console.log(`[Proxy] ${method} ${target}`);
+          console.log(`[Proxy] Request body:`, req.body);
+          console.log(`[Proxy] Payload:`, payload);
+        }
+        
         const headersToForward = {
           ...req.headers,
           host: undefined, // Prevent host mismatch
           'content-length': undefined // Let Axios compute
         };
+        
         const response = await axios({
           method,
           url: target,

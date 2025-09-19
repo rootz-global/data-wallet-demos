@@ -28,9 +28,24 @@ let main = async function() {
             console.log('POST /post received:', {
                 body: req.body,
                 text: req.body?.text,
-                headers: req.headers
+                headers: req.headers,
+                rawBody: req.rawBody,
+                contentType: req.headers['content-type']
             });
-            let result = data.tryEntry(req.body.text);
+            
+            // Handle case where body might be empty or malformed
+            let text = req.body?.text;
+            if (!text && req.body && typeof req.body === 'string') {
+                try {
+                    const parsed = JSON.parse(req.body);
+                    text = parsed.text;
+                } catch(e) {
+                    console.log('Failed to parse body as JSON:', e);
+                }
+            }
+            
+            console.log('Final text to process:', text);
+            let result = data.tryEntry(text);
             console.log('tryEntry result:', result);
             res.status(200).json(result);
         } catch(e) {
