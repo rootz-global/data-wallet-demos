@@ -8,8 +8,10 @@ onload = async () =>{
     let entrySend = document.querySelector('#entry-send');
     let featured = document.querySelector('#featured');
     let voteButton = document.querySelector('#vote');
+    let showTopButton = document.querySelector('#show-top');
     let popup = document.querySelector('#popup-shim');
     let candidates = document.querySelector('#feature-list');
+    let topList = document.querySelector('#top-list');
     entryPost.setAttribute('maxlength','256');
     let statusDefault = "Please avoid profanity"
     entryStatus.innerHTML = statusDefault;
@@ -19,15 +21,28 @@ onload = async () =>{
     });
 
     entrySend.addEventListener('click',async (e) =>{
-        await API.post('/post',{text:entryPost.value});
-        entryPost.value = '';
-        entryStatus.innerHTML = statusDefault;
+        entryStatus.innerHTML = 'Posting...';
+        try {
+            let result = await API.post('/post',{text:entryPost.value});
+            entryPost.value = '';
+            if (result.id) {
+                entryStatus.innerHTML = 'Posted! Your submission entered the lottery.';
+            } else {
+                entryStatus.innerHTML = 'The lottery is full. Try again later.';
+            }
+            setTimeout(() => {
+                entryStatus.innerHTML = statusDefault;
+            }, 3000);
+        } catch(e) {
+            entryStatus.innerHTML = 'Error posting. Please try again.';
+            setTimeout(() => {
+                entryStatus.innerHTML = statusDefault;
+            }, 3000);
+        }
     });
     voteButton.addEventListener('click',async ()=>{
         let result = await API.get('/list');
-        // Filter posts that have bodies and are valid for voting
-        let validPosts = result.filter(post => post.body && post.body.trim());
-        candidates.innerHTML = validPosts.reduce((result,post)=>{
+        candidates.innerHTML = result.reduce((result,post)=>{
             result += `<div id="${post.id}" class="feature-option">
                 <div class="option-emotion">
                     <span class='icon icon-thumbs-down'></span>
@@ -48,41 +63,51 @@ onload = async () =>{
             option.querySelector('.icon-thumbs-up').addEventListener('click',async ()=>{
                 if (option.classList.contains('up') || option.classList.contains('down')) return;
                 option.classList.add('up');
-                const voteResult = await API.get(`/vote/${option.id}/true`);
-                console.log('Upvote result:', voteResult);
-                // Immediately update the featured post
-                setTimeout(updateFeature, 100);
+                await API.get(`/vote/${option.id}/true`);
             });
             option.querySelector('.icon-thumbs-down').addEventListener('click',async ()=>{
                 if (option.classList.contains('up') || option.classList.contains('down')) return;
                 option.classList.add('down');
-                const voteResult = await API.get(`/vote/${option.id}/false`);
-                console.log('Downvote result:', voteResult);
-                // Immediately update the featured post
-                setTimeout(updateFeature, 100);
+                await API.get(`/vote/${option.id}/false`);
             });
         });
     });
-    popup.addEventListener('click',()=>{
-        candidates.classList.remove('active');
-        popup.classList.remove('active');
+
+    showTopButton.addEventListener('click',async ()=>{
+        let result = await API.get('/top');
+        topList.innerHTML = result.reduce((html,post,index)=>{
+            let basePoints = post.basePoints || 100;
+            let voteScore = post.ups - post.downs;
+            let totalRaw = basePoints + voteScore;
+            html += `<div class="top-option">
+                <div class="top-rank">#${index + 1}</div>
+                <div class="top-body">${post.body}</div>
+                <div class="top-score">Points: ${totalRaw} (Base: ${basePoints} + Votes: ${voteScore})</div>
+            </div>`
+            return html;
+        },'<h2>Top Ten Posts</h2><span class="icon exit icon-circle-with-cross"></span>');
+        popup.classList.add('active');
+        topList.classList.add('active');
+        document.querySelector('#top-list .exit').addEventListener('click',()=>{
+            topList.classList.remove('active');
+            popup.classList.remove('active');
+        });
+    });
+
+    popup.addEventListener('click',(e)=>{
+        if (e.target === popup) {
+            candidates.classList.remove('active');
+            topList.classList.remove('active');
+            popup.classList.remove('active');
+        }
     })
 
     await updateFeature();
 
     async function updateFeature() {
-        try {
-            let result = await API.get('/featured');
-            if (result && result.body) {
-                featured.innerHTML = result.body;
-            } else {
-                featured.innerHTML = "Working... Post something.";
-            }
-        } catch (error) {
-            console.error('Error updating featured post:', error);
-            featured.innerHTML = "Working... Post something.";
-        }
-        setTimeout(updateFeature, 5000);
+        let result = await API.get('/featured');
+        featured.innerHTML = result.body;
+        setTimeout(updateFeature,5000);
     }
 }
 

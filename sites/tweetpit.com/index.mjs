@@ -6,7 +6,7 @@ import {fileURLToPath} from "url";
 import Data from "./data.mjs";
 const root = path.dirname(fileURLToPath(import.meta.url));
 const library = {
-    'moment':'/moment/min/moment-with-locales.js'
+    'moment':'/moment/min/moment-with-locales.min.js'
 }
 
 let main = async function() {
@@ -85,7 +85,7 @@ let main = async function() {
     let server = http.createServer(app);
     server.listen(process.env.PORT || 3000);
     server.on('error', console.error);
-    server.on('listening',()=>console.log(`tweetpit.thirdparty.company listening on port ${server.address().port}`));
+    server.on('listening',()=>console.log("Listening on port "+server.address().port));
 }();
 
 process.on('SIGINT', function() {

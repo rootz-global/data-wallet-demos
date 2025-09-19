@@ -4,7 +4,7 @@
   "description": "Part of data-wallet-demos - Opinionate, if you're lucky",
   "license": "MIT",
   "author": "Michael Sprague",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.mjs",
   "scripts": {
     "start": "node index.mjs",

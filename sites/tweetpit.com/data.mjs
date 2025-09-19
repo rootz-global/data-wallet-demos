@@ -3,58 +3,71 @@
  */
 
 import fs from 'node:fs';
-import path from 'path';
-import os from 'os';
 import moment from 'moment';
 export default class Data {
     constructor() {
         this.maxRotation = 10;
         this.maxLife = 60; //minutes
+        this.featuredRotationTime = 5; //minutes
 
-        const dataDir = path.join(os.homedir(), '.tweetpit');
-        const dataPath = path.join(dataDir, 'data.json');
-        
-        // Ensure the .tweetpit directory exists
-        if (!fs.existsSync(dataDir)) {
-            fs.mkdirSync(dataDir, { recursive: true });
-        }
-        
-        // Read the data file if it exists, otherwise start with empty array
+        const dataPath = './data.json';
         let fileData = '';
         if (fs.existsSync(dataPath)) {
             fileData = fs.readFileSync(dataPath);
         }
         this.posts = fileData ? JSON.parse(fileData) : [];
+        this.featuredPost = null;
+        this.featuredExpiry = null;
         this.rotate();
     }
 
     /**
-     * Get the post at the top of list. It gets sorted by votes
-     * and pruned by expiration
+     * Get the featured post (moved from top of list for rotation)
      */
     featured() {
-        // Find the first post with a body
-        const validPost = this.posts.find(post => post.body && post.body.trim());
-        return validPost || null;
+        if (!this.featuredPost || (this.featuredExpiry && moment().isAfter(this.featuredExpiry))) {
+            this.rotateFeatured();
+        }
+        return this.featuredPost;
+    }
+
+    /**
+     * Move top post to featured and set rotation timer
+     */
+    rotateFeatured() {
+        if (this.posts.length > 0) {
+            this.featuredPost = this.posts.shift();
+            this.featuredExpiry = moment().add(this.featuredRotationTime, 'minutes');
+        }
+    }
+
+    /**
+     * Get top 10 sorted posts
+     */
+    top() {
+        return this.posts.slice(0, 10);
     }
 
     /**
      * Given a post, randomly select it based on traffic.
      */
     tryEntry(body) {
-        if (this.posts.length < this.maxRotation) {
-            let record = {
-                id:Data.createid(),
-                exp:moment().add(this.maxLife,'minutes').valueOf(),
-                ups:0,
-                downs:0,
-                body:body
-            }
-            this.posts.push(record);
-            return record;
-        } else {
-            return {};
+        let record = {
+            id:Data.createid(),
+            created:moment().valueOf(),
+            ups:0,
+            downs:0,
+            basePoints:100,
+            body:body
         }
+        this.posts.push(record);
+        this.sortPosts();
+        
+        if (this.posts.length > this.maxRotation) {
+            this.posts = this.posts.slice(0, this.maxRotation);
+        }
+        
+        return record;
     }
 
     /**
@@ -62,12 +75,41 @@ export default class Data {
      */
     vote(id,stance) {
         let index = this.posts.findIndex((post)=>{return post.id === id})
-        if (index >= 0) this.posts[index][stance?'ups':'downs']++;
-        this.posts.sort((a,b)=>{
-            if (a.ups - a.downs === b.ups - b.downs) return 0;
-            return (a.ups - a.downs > b.ups - b.downs)?-1:1;
-        })
+        if (index >= 0) {
+            if (stance) {
+                this.posts[index].ups += 5;
+            } else {
+                this.posts[index].downs += 5;
+            }
+        }
+        this.sortPosts();
         return {vote:stance};
+    }
+
+    /**
+     * Sort posts by effective score (with time decay)
+     */
+    sortPosts() {
+        this.posts.sort((a,b)=>{
+            let scoreA = this.getEffectiveScore(a);
+            let scoreB = this.getEffectiveScore(b);
+            if (scoreA === scoreB) return 0;
+            return scoreA > scoreB ? -1 : 1;
+        });
+    }
+
+    /**
+     * Calculate score with exponential time-based decay
+     */
+    getEffectiveScore(post) {
+        let voteScore = post.ups - post.downs;
+        let totalScore = (post.basePoints || 100) + voteScore;
+        
+        let ageInHours = moment().diff(moment(post.created), 'hours', true);
+        let decayFactor = Math.pow(0.95, ageInHours);
+        decayFactor = Math.max(0.01, decayFactor);
+        
+        return totalScore * decayFactor;
     }
 
     /**
@@ -77,33 +119,9 @@ export default class Data {
         return this.posts;
     }
 
-    /**
-     * Return posts sorted by votes (top rated)
-     */
-    top() {
-        return this.posts.slice().sort((a, b) => {
-            const aScore = (a.ups || 0) - (a.downs || 0);
-            const bScore = (b.ups || 0) - (b.downs || 0);
-            return bScore - aScore;
-        });
-    }
-
     rotate() {
-        this.posts = this.posts.reduce((accumulator,post)=>{
-            if (moment().subtract(this.maxLife,'minutes').isBefore(moment(post.exp))) {
-                accumulator.push(post);
-            }
-            return accumulator;
-        },[])
-        const dataDir = path.join(os.homedir(), '.tweetpit');
-        const dataPath = path.join(dataDir, 'data.json');
-        
-        // Ensure the .tweetpit directory exists before writing
-        if (!fs.existsSync(dataDir)) {
-            fs.mkdirSync(dataDir, { recursive: true });
-        }
-        
-        fs.writeFileSync(dataPath, JSON.stringify(this.posts));
+        this.sortPosts();
+        fs.writeFileSync('./data.json',JSON.stringify(this.posts));
         setTimeout(this.rotate.bind(this),2000);
     }
 

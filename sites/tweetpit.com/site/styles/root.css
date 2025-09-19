@@ -238,3 +238,53 @@ IFRAME {
     background-color:var(--page-border);
 }
 
+#top-list {
+    position:absolute;
+    left:var(--spacer3);
+    right:var(--spacer3);
+    top:var(--spacer3);
+    bottom:var(--spacer3);
+    padding:var(--spacer2);
+    border:1px solid black;
+    border-radius: 15px;
+    background-color:white;
+    overflow:auto;
+    display:none;
+}
+#top-list.active {
+    display:block;
+}
+#top-list h2 {
+    margin-top:0;
+    margin-right:24px
+}
+#top-list .exit {
+    position:absolute;
+    right:var(--spacer);
+    top:var(--spacer);
+    font-size:1.5em;
+    cursor:pointer;
+}
+.top-option {
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    padding:var(--spacer) 0;
+    border-bottom: 1px solid var(--page-border);
+}
+.top-rank {
+    font-weight: bold;
+    font-size: 1.2em;
+    width: 40px;
+    text-align: center;
+}
+.top-body {
+    flex: 1 1;
+    padding: 0 var(--spacer);
+}
+.top-score {
+    font-size: 0.9em;
+    color: var(--text-color-quiet);
+    white-space: nowrap;
+}
+
