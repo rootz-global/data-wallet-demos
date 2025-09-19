@@ -111,7 +111,16 @@ onload = async () =>{
 
     async function updateFeature() {
         let result = await API.get('/featured');
-        featured.innerHTML = result.body;
+        console.log('Frontend: Featured result:', result);
+        console.log('Frontend: result.body:', result.body);
+        // Handle both direct body string and post object format
+        if (typeof result === 'string') {
+            featured.innerHTML = result;
+        } else if (result && result.body) {
+            featured.innerHTML = result.body;
+        } else {
+            featured.innerHTML = "Working... Post something.";
+        }
         setTimeout(updateFeature,5000);
     }
 }
