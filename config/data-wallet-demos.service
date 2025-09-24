@@ -3,7 +3,7 @@ Description=data-wallet-demos
 
 [Service]
 WorkingDirectory=/opt/data-wallet-demos
-ExecStart=/usr/bin/npm start &
+ExecStart=/usr/bin/npm start
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
