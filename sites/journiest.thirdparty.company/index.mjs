@@ -13,7 +13,7 @@ async function main() {
 
   // attach Epistery directly to app
   const epistery = await Epistery.connect();
-  // await epistery.attach(app);
+  await epistery.attach(app);
 
   // Serve static files (CSS, images, etc.)
   app.use('/public', express.static(path.join(__dirname, 'public')));
