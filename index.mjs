@@ -7,7 +7,7 @@ import http from "http";
 import https from "https";
 import child_process from "child_process";
 import ini from 'ini';
-import { Epistery } from 'epistery';
+import { Epistery, Config } from 'epistery';
 import { Certify, Synchronize } from '@metric-im/administrate';
 
 const rootDomain = 'thirdparty.company';
@@ -19,7 +19,7 @@ async function main() {
   const spawn_port = (process.env.PORTSPAWN || 53874);
 
   // middleware to manage SSL cert
-  const certify = await Certify.attach(app,{contactEmail:'michael@sprague.com'});
+  const certify = await Certify.attach(app,{contactEmail:'michael@rootz.global'});
   // middleware to handle epistery data wallets
   const epistery = await Epistery.connect();
   await epistery.setDomain(rootDomain);
@@ -83,25 +83,27 @@ async function main() {
       res.send(home);
     } else {
       const site = sites[domain];
+      await epistery.setDomain(domain);
+      console.log(`Showing ${domain}`);
       if (site) {
         let target = `http://127.0.0.1:${site.options.env.PORT}${req.url}`;
         const method = req.method;
         const isBodyMethod = ['POST', 'PUT', 'PATCH'].includes(method);
         const payload = isBodyMethod ? req.body : null;
-        
+
         // Debug logging for POST requests
         if (method === 'POST') {
           console.log(`[Proxy] ${method} ${target}`);
           console.log(`[Proxy] Request body:`, req.body);
           console.log(`[Proxy] Payload:`, payload);
         }
-        
+
         const headersToForward = {
           ...req.headers,
           host: undefined, // Prevent host mismatch
           'content-length': undefined // Let Axios compute
         };
-        
+
         const response = await axios({
           method,
           url: target,
