@@ -15,6 +15,7 @@ async function main() {
   app.use(express.urlencoded({extended: true}));
 
   const epistery = await Epistery.connect();
+  await epistery.setDomain(process.env.DOMAIN || 'journiest.thirdparty.company');
   await epistery.attach(app);
 
   // Serve static files (CSS, images, etc.)
