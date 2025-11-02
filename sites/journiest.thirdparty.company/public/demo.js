@@ -55,21 +55,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Initialize Epistery client
+    // Initialize Epistery witness
     try {
-        const client = new EpisteryClient();
-        await client.connect();
+        const witness = Epistery.witness;
 
         const statusEl = document.getElementById('episteryStatus');
-        if (statusEl) {
+        if (statusEl && witness && witness.wallet) {
             statusEl.innerHTML = `
                 <small style="color: #28a745;">
-                    ✓ Connected as: <code>${client.address.substring(0, 12)}...</code>
+                    ✓ Connected as: <code>${witness.wallet.address.substring(0, 12)}...</code>
                 </small>
             `;
         }
 
-        console.log('Epistery connected:', client.address);
+        console.log('Epistery connected:', witness.wallet.address);
     } catch (error) {
         console.error('Failed to connect to Epistery:', error);
         const statusEl = document.getElementById('episteryStatus');
