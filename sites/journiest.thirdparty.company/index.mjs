@@ -11,7 +11,9 @@ const __dirname = path.dirname(__filename);
 async function main() {
   const app = express();
 
-  // attach Epistery directly to app
+  app.use(express.json({limit: '50mb'}));
+  app.use(express.urlencoded({extended: true}));
+
   const epistery = await Epistery.connect();
   await epistery.attach(app);
 

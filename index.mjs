@@ -23,7 +23,6 @@ async function main() {
   // middleware to handle epistery data wallets
   const epistery = await Epistery.connect();
   await epistery.setDomain(rootDomain);
-  // await epistery.attach(app);
 
   // web hook for github updates to repository
   await Synchronize.attach(app,undefined,'main');
