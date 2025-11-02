@@ -99,7 +99,7 @@ async function main() {
 
         const headersToForward = {
           ...req.headers,
-          host: undefined, // Prevent host mismatch
+          host: domain,
           'content-length': undefined // Let Axios compute
         };
 
