@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 async function main() {
   const app = express();
 
+  app.enable('trust proxy');
   app.use(express.json({limit: '50mb'}));
   app.use(express.urlencoded({extended: true}));
 

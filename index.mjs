@@ -100,6 +100,8 @@ async function main() {
         const headersToForward = {
           ...req.headers,
           host: domain,
+          'x-forwarded-proto': req.protocol,
+          'x-forwarded-host': domain,
           'content-length': undefined // Let Axios compute
         };
 
